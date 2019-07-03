@@ -31,7 +31,7 @@ namespace AdvancedUtilities.Cameras.Components
 
         private void SetOffset(Vector3 p_offset)
         {
-            Vector3 t_temp = m_offset + p_offset*Time.deltaTime* m_Speed;
+            Vector3 t_temp = m_offset + p_offset.normalized*Time.deltaTime* m_Speed;
 
             //检测是否可以继续偏移
             //使用椭圆计算公式

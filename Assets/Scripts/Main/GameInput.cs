@@ -78,7 +78,7 @@ public class GameInput:MonoBehaviour {
 
         Vector2 t_tempMove = new Vector2(joystickMove.x, -joystickMove.y);
         Vector3 t_dir = GetWorldXOZDirFromJoystickMove(Camera.main.transform, t_tempMove);
-        if (m_isLeftMove)
+       // if (m_isLeftMove)
         {
             Thero.instance.RotationMove(t_dir);
         }
