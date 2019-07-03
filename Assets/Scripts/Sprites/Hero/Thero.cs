@@ -78,12 +78,12 @@ public class Thero : MonoBehaviour {
     Vector3 GetSplitMoveDir(Vector3 p_dir)
     {
         Vector3 t_normal= MapManager.instance.GetHitNormal(transform.position + Vector3.up * 0.2f, p_dir);
-        if (t_normal.Equals(Vector3.zero))
+        if (VectorUtils.IsVectorEquals(t_normal, Vector3.zero,4))
         {
             return Vector3.zero;
         }
         Vector3 firstLeft = Vector3.Cross(p_dir, t_normal);
-        if (firstLeft.Equals(Vector3.zero))
+        if (VectorUtils.IsVectorEquals(firstLeft, Vector3.zero,4))
         {
             //垂直了，做个偏移
             firstLeft= Vector3.Cross(p_dir+ transform.right*0.1f, t_normal);

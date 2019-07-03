@@ -13,7 +13,25 @@ public class VectorUtils
 		return tpos;
 	}
 
-	///<summary>
+    public static bool IsVectorEquals(Vector3 p_a,Vector3 p_b,int p_pricision=-1)
+    {
+        if (p_pricision!=-1)
+        {
+
+            return GetPricision(p_a.x, p_pricision) == GetPricision(p_b.x, p_pricision)&&
+                   GetPricision(p_a.y, p_pricision) == GetPricision(p_b.y, p_pricision)&&
+                   GetPricision(p_a.z, p_pricision) == GetPricision(p_b.z, p_pricision);
+        }
+        return p_a.x==p_b.x&&p_a.y==p_b.y&&p_a.z==p_b.z;
+    }
+
+    public static float GetPricision(float p_v,int p_pricison)
+    {
+        string t_command = "f" + p_pricison;
+        return float.Parse(p_v.ToString(t_command));
+    }
+
+    ///<summary>
 	/// 注意这个是在xoz平面内的
 	/// 计算当前位置是否在目标半径内
 	/// curpox, curpoy 当前x,y ,  despox, despoy目标x,y  radius 半径

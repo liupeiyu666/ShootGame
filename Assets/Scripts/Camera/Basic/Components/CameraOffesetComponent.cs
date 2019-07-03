@@ -41,6 +41,11 @@ namespace AdvancedUtilities.Cameras.Components
             {
                 m_offset = t_temp;
             }
+            else
+            {
+                //说明已经出界了，那么就要寻找对应的轨迹了，简易的切边行走了
+
+            }
         }
         /// <summary>
         /// 记录上一次获取的偏移值
