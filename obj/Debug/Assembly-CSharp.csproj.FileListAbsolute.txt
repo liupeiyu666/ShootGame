@@ -167,3 +167,6 @@ D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp.csproj.Core
 D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp.dll
 D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp.pdb
+D:\Work\Test\LostTemple\GitShoot\ShootGame\Temp\bin\Debug\LumenWorks.Framework.IO.dll
+D:\Work\Test\LostTemple\GitShoot\ShootGame\Temp\bin\Debug\System.Data.dll
+D:\Work\Test\LostTemple\GitShoot\ShootGame\Temp\bin\Debug\BehaviorDesignerRuntime.dll

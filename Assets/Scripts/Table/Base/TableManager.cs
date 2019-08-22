@@ -40,9 +40,14 @@ namespace ZTool.Table
         }
 
         #endregion
+
+        public Action OnLoadComplete;
         #region 开始加载，对外发布
-        //已经加载的配置资源
-        private int m_iCount;
+
+       static Object locker = new Object();
+
+    //已经加载的配置资源
+       private  int m_iCount;
 
         private int m_loadCount;
         //所有的资源配置数量
@@ -113,7 +118,7 @@ namespace ZTool.Table
 
                     //跳过此配置的加载
                     m_iCount++;
-
+                    
                     OnAllConfigLoadOver();
                 }
             }
@@ -124,7 +129,7 @@ namespace ZTool.Table
             if (p_content == null)
             {
                 m_iCount += 1;
-
+             
                 m_loadCount++;
                 OnAllConfigLoadOver();
                 return;
@@ -135,16 +140,16 @@ namespace ZTool.Table
 
             var name = (string)p_name;
 
-            var type = Type.GetType(string.Format("Tgame.Game.Table.Table_{0}", TableManager.ToTitleCase(name)));
+            var type = Type.GetType(string.Format("Tgame.Game.Table.Table_{0}", name));
             if (type != null)
             {
                 var objs = new object[]
                 {
                 p_content,name,type
                 };
-                //HandlerDataInWorkItem(objs);
+                HandlerDataInWorkItem(objs);
                 //启动线程池 操作数据解析存储
-                ThreadPool.QueueUserWorkItem(HandlerDataInWorkItem, objs);
+            //    ThreadPool.QueueUserWorkItem(HandlerDataInWorkItem, objs);
             }
             else
             {
@@ -182,27 +187,30 @@ namespace ZTool.Table
                 }
             }
 
-            Interlocked.Increment(ref m_iCount);
-
-            //m_iCount += 1;
-
-            OnAllConfigLoadOver();
+            lock (locker)
+            {
+                Interlocked.Increment(ref m_iCount);
+                OnAllConfigLoadOver();
+            }
+           
             //}
         }
 
         private void OnAllConfigLoadOver()
         {
             float pro = (float)m_iCount / m_iAllConfigCount * 0.95f;
-
             ShowProgress = string.Format("{0}/{1}", m_iCount, m_iAllConfigCount);
             if (m_iCount >= m_iAllConfigCount)
             {
                 pro = 1.0f;
-                Debug.Log("load config and extuce Over!!!" + m_iCount + "/" + m_iAllConfigCount);
+                InitOtherModelTable();
+                if (OnLoadComplete!=null)
+                {
+                    OnLoadComplete();
+                }
             }
 
-            InitOtherModelTable();
-            Debug.LogError(Table_Bag_Row.pool_primary.Count);
+           
         }
 
         /// <summary>

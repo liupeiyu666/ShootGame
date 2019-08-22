@@ -166,3 +166,6 @@ D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp-firstpass.c
 D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp-firstpass.csproj.CopyComplete
 D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp-firstpass.dll
 D:\Work\Test\LostTemple\GitShoot\ShootGame\obj\Debug\Assembly-CSharp-firstpass.pdb
+D:\Work\Test\LostTemple\GitShoot\ShootGame\Temp\bin\Debug\LumenWorks.Framework.IO.dll
+D:\Work\Test\LostTemple\GitShoot\ShootGame\Temp\bin\Debug\System.Data.dll
+D:\Work\Test\LostTemple\GitShoot\ShootGame\Temp\bin\Debug\BehaviorDesignerRuntime.dll

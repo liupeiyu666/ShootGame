@@ -9,11 +9,16 @@ public class MainTest:MonoBehaviour
 {
     public Button m_shootOne;
     public Button m_shootTwo;
-
     void Start()
     {
-        m_shootOne.onClick.AddListener(delegate() {Thero.instance.Attack(0); });
+        m_shootOne.onClick.AddListener(delegate() {THero.instance.Attack(1); });
 
-        m_shootTwo.onClick.AddListener(delegate () { Thero.instance.Attack(1); });
+        m_shootTwo.onClick.AddListener(delegate () { THero.instance.Attack(2); });
+
     }
+    void Update()
+    {
+
+    }
+
 }

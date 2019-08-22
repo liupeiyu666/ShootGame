@@ -16,18 +16,18 @@ public class GameInput:MonoBehaviour {
 
     private static GameInput _instance;
 
-    public static GameInput instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = new GameInput();
-            }
+    public static GameInput instance;
+    //{
+    //    get
+    //    {
+    //        if (_instance == null)
+    //        {
+    //            _instance = new GameInput();
+    //        }
 
-            return _instance;
-        }
-    }
+    //        return _instance;
+    //    }
+    //}
 
     #endregion
 
@@ -38,7 +38,13 @@ public class GameInput:MonoBehaviour {
     public BasicCameraController m_cameraController;
 
     private Action<Vector3> m_cameraOffsetAct;
-	// Use this for initialization
+
+    void Awake()
+    {
+        instance = this;
+    }
+
+    // Use this for initialization
 	void Start () {
 	    m_leftJoyStick.onMove.AddListener(OnLeftJoyStickMove);
 	    m_leftJoyStick.onMoveEnd.AddListener(OnLeftJoystickMoveEnd);
@@ -59,11 +65,16 @@ public class GameInput:MonoBehaviour {
     {
         m_isLeftMove = true;
         Vector3 t_dir = GetWorldXOZDirFromJoystickMove(Camera.main.transform, joystickMove);
+        t_dir = t_dir.normalized;
         //只负责位置移动
-        Thero.instance.PositionMove(t_dir);
+       
         if (!m_isRightMove)
         {
-            Thero.instance.RotationMove(t_dir);
+            THero.instance.MoveAndRotate(t_dir, t_dir, 2);
+        }
+        else
+        {
+            THero.instance.MoveAndRotate(t_dir, Vector3.zero, 0);
         }
     }
     void OnLeftJoystickMoveEnd()
@@ -80,7 +91,7 @@ public class GameInput:MonoBehaviour {
         Vector3 t_dir = GetWorldXOZDirFromJoystickMove(Camera.main.transform, t_tempMove);
        // if (m_isLeftMove)
         {
-            Thero.instance.RotationMove(t_dir);
+            THero.instance.MoveAndRotate(Vector3.zero, t_dir, 1);
         }
         
         //设置摄像机偏移
@@ -92,6 +103,10 @@ public class GameInput:MonoBehaviour {
     void OnRightJoystickMoveEnd()
     {
         m_isRightMove = false;
+        if (m_cameraOffsetAct != null)
+        {
+            m_cameraOffsetAct(Vector3.zero);
+        }
     }
     public Vector3 GetWorldXOZDirFromJoystickMove(Transform camTrm, Vector2 joystickMove)
     {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 
 public class LoadManager
@@ -43,6 +44,11 @@ public class LoadManager
     {
         TBinLoader t_loader = new TBinLoader(p_url, p_callBack, p_params);
         m_allBinLoader.Add(t_loader);
+    }
+
+    public void LoadObject<T>(string p_url, Action<T, object> p_callBack, object p_params) where  T:Object
+    {
+        GoLoader<T> t_loader = new GoLoader<T>(p_url, p_callBack, p_params);
     }
 
     public void Update()

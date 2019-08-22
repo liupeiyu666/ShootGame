@@ -9,12 +9,12 @@ namespace  Tgame.Game.Table
     ///</summary>
     [Serializable]
     [TableName("bag_row")]
-    public partial class Table_Bag_Row : TableContent
+    public partial class Table_bag_row : TableContent
     {
 
-        private static List<Table_Bag_Row> all_Table_Bag_Row_List = new List<Table_Bag_Row>();
+        private static List<Table_bag_row> all_Table_Bag_Row_List = new List<Table_bag_row>();
         //primary | 主键
-        public static Dictionary<int, Table_Bag_Row > pool_primary = new Dictionary<int, Table_Bag_Row > ();
+        public static Dictionary<int, Table_bag_row > pool_primary = new Dictionary<int, Table_bag_row > ();
         
         
         ///<summary>
@@ -47,8 +47,8 @@ namespace  Tgame.Game.Table
         ///</summary>
         ///	<param id> 主键：ID</param>
         ///
-        public static Table_Bag_Row GetPrimary ( int _id ){        
-            Table_Bag_Row _map0=null;        
+        public static Table_bag_row GetPrimary ( int _id ){        
+            Table_bag_row _map0=null;        
             pool_primary. TryGetValue(_id,out _map0);        
             return  _map0;
         }
@@ -56,14 +56,14 @@ namespace  Tgame.Game.Table
         ///主键
         ///查询所有数据
         ///</summary>
-        public static Dictionary<int, Table_Bag_Row > GetAllPrimary()
+        public static Dictionary<int, Table_bag_row > GetAllPrimary()
         {
             return pool_primary;
         }
 
 
         ///查询出所有的数据
-        public static List<Table_Bag_Row> GetAllPrimaryList()
+        public static List<Table_bag_row> GetAllPrimaryList()
         {
             return all_Table_Bag_Row_List;
         }
@@ -124,8 +124,8 @@ namespace  Tgame.Game.Table
         /// 初始化Pool
         ///</summary>
         public static void InitPool(IList _rows){
-            List<Table_Bag_Row> rows = _rows as List<Table_Bag_Row>;
-            pool_primary=TableContent.ListToPool < int, Table_Bag_Row > ( rows, "map", "id" );
+            List<Table_bag_row> rows = _rows as List<Table_bag_row>;
+            pool_primary=TableContent.ListToPool < int, Table_bag_row > ( rows, "map", "id" );
             all_Table_Bag_Row_List=rows;
         }
         

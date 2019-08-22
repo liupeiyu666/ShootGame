@@ -132,7 +132,15 @@ namespace Engine.Effect
 
         #endregion
 
+        #region 对象池相关
 
+        public void BeforePushPool()
+        {
+            m_state = EffectLifeState.None;
+        }
+
+
+        #endregion
         void DoRules()
         {
             switch (m_state)

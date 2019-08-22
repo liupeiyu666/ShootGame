@@ -113,11 +113,12 @@ namespace AdvancedUtilities.Cameras
             // Then let update handle everything
             UpdateCamera();
         }
-        
+
         void LateUpdate()
         {
             UpdateCamera();
             CameraTransform.ApplyTo(Camera); // Apply the virtual transform to the actual transform
+
         }
 
         public override void UpdateCamera()

@@ -1,0 +1,14 @@
+﻿        ///<summary>
+        /// {0}
+        ///</summary>
+        private {2} _{1};
+        ///<summary>
+        /// {0}
+        ///</summary>
+        public {2} {1}
+        {{
+            get
+            {{
+               return this._{1};
+            }}
+        }}

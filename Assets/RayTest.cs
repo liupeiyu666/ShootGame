@@ -31,6 +31,7 @@ public class RayTest : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
       
+        LoadManager.instance.Update();
         //transform.Rotate(transform.up,30f);
         //Ray ray = new Ray();
         //ray.origin = transform.position;

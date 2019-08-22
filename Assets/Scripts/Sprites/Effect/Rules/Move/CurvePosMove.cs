@@ -95,7 +95,7 @@ namespace Engine.Effect
 
         void CaculateFollow(float p_step)
         {
-            if (m_shareDate.m_targetTrans.gameObject.activeInHierarchy)
+            if (m_shareDate.m_targetTrans&&m_shareDate.m_targetTrans.gameObject.activeInHierarchy)
             {
                 //if (m_shareDate.m_targetTrans != null)
                 //{

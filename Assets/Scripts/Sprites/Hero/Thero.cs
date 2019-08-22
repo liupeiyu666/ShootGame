@@ -1,141 +1,235 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Engine.Effect;
-using TMPro;
+using Tgame.Game.Table;
 using UnityEngine;
+
 /// <summary>
-/// @author Lpy
-/// 临时测试的角色
+/// 对外接口
 /// </summary>
-public class Thero : MonoBehaviour {
-    #region 单例
+public class THero:TSprite
+{
+    #region
+    //伪单例，因为可以保证这个实例只会有一个
+    public static THero instance;
 
-    private Thero()
-    {
-    }
-
-    public static Thero instance;
-
-    public Transform m_shootTrans;
     #endregion
-
-    void Awake()
+    public override void Startup()
     {
         instance = this;
+        //1.加载外显
+        GetComp<MainLoaderComp>().Start();
+        InitData();
+        base.Startup();
     }
-
-    // Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-	    CheckLerp();
-	    if (Input.GetKeyDown(KeyCode.T))
-	    {
-	        Attack(0);
-	    }
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            Attack(1);
-        }
-    }
-
-    #region 移动
-
-    public float m_MoveSpeed = 2;
-    public float m_RotatSpeed = 5;
-    /// <summary>
-    /// 位置移动
-    /// </summary>
-    /// <param name="p_dir"></param>
-    public void PositionMove(Vector3 p_dir,int p_times=0)
+    private SpriteFSM fsm;
+    private AnimComp animComp;
+    private GORootComp goRootComp;
+    private MoveComp moveComp;
+    protected override void InitComp()
     {
-        Vector3 t_pos = transform.position + p_dir* m_MoveSpeed*Time.deltaTime;
-        float t_height= MapManager.instance.GetHeight(t_pos);
+        base.InitComp();
+        //1.初始化加载
+        AddComp<MainLoaderComp>();
+        goRootComp=AddComp<GORootComp>();
+        fsm=AddComp<SpriteFSM>();
+        animComp=AddComp<AnimComp>();
+        moveComp = AddComp<MoveComp>();
+        InitCompEvent();
+      
+        InitFsm();
+    }
+    /// <summary>
+    /// 主要处理各个comp之间的流程
+    /// </summary>
+    protected void InitCompEvent()
+    {
+        //1.主体加载完成，开始进行结构设置
+        GetComp<MainLoaderComp>().eventListener += (a, b) =>
+        {
+            goRootComp.Start();
+            //2.初始化动画， 由于gorootcomp中不存在异步和多线程所以直接用就可以
+            animComp.InitBody(goRootComp.bodyctrlTrm.GetComponent<Animator>(), CB_GetBodyClipName);
+        };
        
-        if (t_height>=0)
+    }
+
+    #region 初始化状态机
+
+    protected void InitFsm()
+    {
+        fsm.AddState(new CastSkillState());
+    }
+    #endregion
+
+    #region 初始化Data数据
+
+    protected void InitData()
+    {
+        Table_role t_role = Table_role.GetPrimary(m_data.GetData<CreatData>().role_id);
+        OperateData t_operateData=new OperateData();
+        t_operateData.m_moveSpeed = t_role.move_speed;
+        t_operateData.m_rotatSpeed = t_role.rotate_speed;
+        m_data.AddData(t_operateData);
+    }
+
+
+    #endregion
+    #region 动作映射
+    string CB_GetBodyClipName(string animName)
+    {
+        return animName;
+        //if (goRoot.mountctrlTrm != null)
+        //{//有坐骑
+        //    return AnimEnum.STAND;//坐骑上的其他动作，都映射成stand
+        //}
+        //else
+        //{//没坐骑
+        //    return animName;//使用真实动作
+        //}
+    }
+
+
+    #endregion
+    #region 对外方法
+    /// <summary>
+    /// 移动和转向的方法   p_state生效的参数 0表示只有移动生效，1表示只有转向生效  2表示都生效
+    /// </summary>
+    /// <param name="p_moveDir"></param>
+    /// <param name="p_rotateDir"></param>
+    public void MoveAndRotate(Vector3 p_moveDir,Vector3 p_rotateDir, int p_state)
+    {
+        switch (p_state)
         {
-          //  Debug.LogError(t_height + " ===== " + (t_height>=0) + "   " + Time.frameCount);
-            t_pos.y = t_height;
-            transform.position = t_pos;
+            //只操作位移，双摇杆都在移动
+            case 0:
+                moveComp.PositionMove(p_moveDir);
+                break;
+            //只操作旋转，双摇杆都在移动
+            case 1:
+                //根据转动的方向与玩家的正面方向的夹角判断播放的移动动作
+                CaculateAni(p_rotateDir);
+                moveComp.RotationMove(p_rotateDir);
+                break;
+            //只有左摇杆移动
+            case 2:
+                //播放动画
+                moveComp.PositionMove(p_moveDir);
+                moveComp.RotationMove(p_rotateDir);
+                break;
         }
-        else
+
+        //if (fsm.IsCurrStateID(StateEnum.DIR_MOVE))
+        //{
+        //    DirMoveState t_state = (DirMoveState) fsm.FindState(StateEnum.DIR_MOVE);
+        //    switch (p_state)
+        //    {
+        //        case 0:
+        //            t_state.PositionMove(p_moveDir);
+        //            break;
+        //        case 1:
+        //            t_state.RotationMove(p_rotateDir);
+        //            break;
+        //        case 2:
+        //            t_state.PositionMove(p_moveDir);
+        //            t_state.RotationMove(p_rotateDir);
+        //            break;
+        //    }
+        //}
+        //else
+        //{
+        //    SwitchState(StateEnum.DIR_MOVE,new DirMoveState.EnterParams(p_moveDir, p_rotateDir, p_state));
+        //}
+    }
+
+    private void CaculateAni(Vector3 p_rotateDir)
+    {
+        if (m_spacialComp.faceToDir!= Vector3.zero)
         {
-            Vector3 t_result = GetSplitMoveDir(p_dir);
-            if (t_result != Vector3.zero)
+            float t_angle = Vector3.Angle(p_rotateDir, m_spacialComp.faceToDir)%180;
+            bool t_rightSide = Vector3.Dot(m_spacialComp.faceToDir,p_rotateDir) >= 0;
+            if (t_angle<=22.5f)
             {
-                if (p_times==0)
+                animComp.CrossFade(AnimEnum.RUN_FORWARD, 0.1f, 0);
+            }
+            else if (t_angle <= 67.5f)
+            {
+                if (t_rightSide)
                 {
-                    PositionMove(t_result,1);
+                    animComp.CrossFade(AnimEnum.RUN_F_R, 0.1f, 0);
+                }
+                else
+                {
+                    animComp.CrossFade(AnimEnum.RUN_F_R, 0.1f, 0);
                 }
             }
-        }
-    }
-
-    Vector3 GetSplitMoveDir(Vector3 p_dir)
-    {
-        Vector3 t_normal= MapManager.instance.GetHitNormal(transform.position + Vector3.up * 0.2f, p_dir);
-        if (VectorUtils.IsVectorEquals(t_normal, Vector3.zero,4))
-        {
-            return Vector3.zero;
-        }
-        Vector3 firstLeft = Vector3.Cross(p_dir, t_normal);
-        if (VectorUtils.IsVectorEquals(firstLeft, Vector3.zero,4))
-        {
-            //垂直了，做个偏移
-            firstLeft= Vector3.Cross(p_dir+ transform.right*0.1f, t_normal);
-        }
-        Vector3 t_dir = Vector3.Cross(t_normal, firstLeft).normalized;
-        return t_dir;
-    }
-
-    private Vector3 m_targetDir;
-
-    private bool m_needLerp;
-    /// <summary>
-    /// 方向移动
-    /// </summary>
-    /// <param name="p_dir"></param>
-    public void RotationMove(Vector3 p_dir)
-    {
-        m_targetDir = p_dir;
-        m_needLerp = true;
-      
-    }
-
-    void CheckLerp()
-    {
-        if (m_needLerp)
-        {
-            Quaternion t_targetRot = Quaternion.LookRotation(m_targetDir);
-            if (Mathf.Abs(transform.eulerAngles.y- t_targetRot.eulerAngles.y) >0.01f)
+            else if (t_angle < 112.5f)
             {
-                float rotY = Quaternion.Slerp(transform.rotation, t_targetRot, m_RotatSpeed * Time.deltaTime).eulerAngles.y;
-                transform.eulerAngles=new Vector3(0, rotY, 0);
+                if (t_rightSide)
+                {
+                    animComp.CrossFade(AnimEnum.RUN_RIGHT, 0.1f, 0);
+                }
+                else
+                {
+                    animComp.CrossFade(AnimEnum.RUN_LEFT, 0.1f, 0);
+                }
+            }
+            else if (t_angle < 157.5f)
+            {
+                if (t_rightSide)
+                {
+                    animComp.CrossFade(AnimEnum.RUN_B_R, 0.1f, 0);
+                }
+                else
+                {
+                    animComp.CrossFade(AnimEnum.RUN_B_L, 0.1f, 0);
+                }
             }
             else
             {
-                transform.eulerAngles = new Vector3(0, t_targetRot.eulerAngles.y, 0);
-                m_needLerp = false;
+                animComp.CrossFade(AnimEnum.RUN_BACK, 0.1f, 0);
             }
+        }
+       
+    }
+
+    public void Attack(int p_skillId,List<TSprite> p_targetList=null)
+    {
+
+        Table_skill t_skill= Table_skill.GetPrimary(p_skillId);
+        //1.直接播放特效即可
+        EffectShareData t_data = new EffectShareData();
+      //  Debug.LogError("====:"+ p_skillId+"   "+ t_skill.bind_pos+"   "+ goRootComp.GetBindPos(t_skill.bind_pos));
+        t_data.m_bornTrans = goRootComp.GetBindPos(t_skill.bind_pos);
+        EffectManager.instance.CreatEffectByController(t_skill.effectid, t_data);
+    }
+
+    public void SwitchState(int stateID, System.Object info = null)
+    {
+        //1.做状态机的逻辑处理
+        if (StateCheck(stateID)&& BuffCheck())
+        {
+            //2.进入
+            fsm.SwitchState(stateID, info);
         }
     }
 
-    #endregion
 
-    #region 攻击
-
-    public void Attack(int p_index)
+    private bool StateCheck(int p_stateId)
     {
-        //1.直接播放特效即可
-        EffectShareData t_data= new EffectShareData();
-        t_data.m_bornTrans = m_shootTrans;
-        EffectManager.instance.CreatEffectByController(p_index, t_data);
+        switch (fsm.GetCurrStateID())
+        {
+             
+        }
+        return true;
     }
 
+    private bool BuffCheck()
+    {
+        return true;
+    }
 
     #endregion
 }

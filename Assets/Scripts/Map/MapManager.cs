@@ -48,6 +48,14 @@ public class MapManager  {
         return t_height;
     }
 
+    public float GetHeight(int x,int y)
+    {
+        return GetHeight(new Vector3(x,0,y));
+    }
+    public float GetHeight(float x, float y)
+    {
+        return GetHeight(new Vector3(x, 0, y));
+    }
     public Vector3 GetHitNormal(Vector3 p_pos,Vector3 p_dir)
     {
        

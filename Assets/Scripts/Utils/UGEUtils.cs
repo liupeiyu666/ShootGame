@@ -149,7 +149,7 @@ public class UGEUtils
 	/// </summary>
 	/// <param name="trm">要移除children的对象</param>
 	public static  void CleanChildren(Transform trm){
-		//TTrace.p ("TGameUtil.CleanChildren",trm.name);
+		//Debug.Log ("TGameUtil.CleanChildren",trm.name);
 		while(trm.childCount > 0 ){
 
 			Transform  tc  = trm.GetChild(0);
@@ -490,30 +490,49 @@ public class UGEUtils
 			return 1;
 		}
 	}
+
+    public static void SetLayers(GameObject p_go,int p_layer,bool p_containsChild)
+    {
+        p_go.layer = p_layer;
+        if (p_containsChild)
+        {
+            Transform[] t_child = p_go.GetComponentsInChildren<Transform>();
+            for (int i = 0; i < t_child.Length; i++)
+            {
+                t_child[i].gameObject.layer = p_layer;
+            }
+        }
+    }
+
     #region 数据类型转换
 
     public static void GetValueFromString<T>(string t_str,out T t_result)
     {
-        t_result=default(T);
-        if (t_result.GetType()== typeof(int))
+      //  Debug.LogError("**********=====:" + t_str + "   " + typeof(T));
+     
+        if (typeof(T) == typeof(int))
         {
             t_result = (T)(object)GetIntFromString(t_str);
         }
-        else if (t_result.GetType() == typeof(float))
+        else if (typeof(T) == typeof(float))
         {
             t_result = (T)(object)GetFloatFromString(t_str);
         }
-        else if (t_result.GetType() == typeof(byte))
+        else if (typeof(T) == typeof(byte))
         {
             t_result = (T)(object)GetByteFromString(t_str);
         }
-        else if (t_result.GetType() == typeof(double))
+        else if (typeof(T) == typeof(double))
         {
             t_result = (T)(object)GetDoubleFromString(t_str);
         }
-        else if (t_result.GetType() == typeof(string))
+        else if (typeof(T) == typeof(string))
         {
             t_result = (T)(object)t_str;
+        }
+        else
+        {
+            t_result = default(T);
         }
     }
 

@@ -1,0 +1,4 @@
+﻿id,effectid,ani_name,bind_pos,bind_des
+int,int,string,int,string
+,,,绑定的位置,绑定的描述，用于偏移设置
+0,0,0,0,

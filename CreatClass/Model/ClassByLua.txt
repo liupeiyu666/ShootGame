@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using ZTool.Table;
+namespace Tgame.Game.Table
+{{
+    ///<summary>
+    /// AutoCreat--部分类，所以需要特殊变更自己扩充部分类，不要动这里，每次自动生成都会删除重新生成
+    ///</summary>
+    [Serializable]
+    [TableName("{0}")]
+    public partial class Table_{0}
+    {{
+      
+        //primary | 主键
+        public static Dictionary<int, Table_{0}> pool_primary = new Dictionary<int, Table_{0}>();
+
+        #region 字段
+{1}
+        #endregion
+        ///<summary>
+        /// 主键
+        /// 查询数据
+        ///</summary>
+        ///	<param id> 主键：ID</param>
+        ///
+        public static Table_{0} GetPrimary(int _id)
+        {{
+            Table_{0} _map0 = null;
+            pool_primary.TryGetValue(_id, out _map0);
+            return _map0;
+        }}
+		/// <summary>
+        /// 初始化数据
+        /// </summary>
+        public static void InitData()
+        {{
+            pool_primary = LuaManager.instance.m_luaEnv.Global.Get<Dictionary<int, Table_{0}>>("Table_{0}");
+            if (pool_primary == null)
+            {{
+                Debug.LogError("转换配表失败：" + "Table_{0}");
+            }}
+        }}
+    }}
+}}

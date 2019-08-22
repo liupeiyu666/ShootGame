@@ -1,0 +1,4 @@
+id,move_speed,rotate_speed,avatar_id
+int,float,float,int
+,移动速度,转身速度,模板id
+1,5,3,1000

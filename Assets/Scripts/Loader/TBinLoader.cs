@@ -33,7 +33,7 @@ public class TBinLoader
 
     internal void DoStart()
     {
-        Debug.LogError("开始加载："+ fullUrl);
+      //  Debug.LogError("开始加载："+ fullUrl);
         www = new WWW(fullUrl);
     }
 
@@ -41,12 +41,11 @@ public class TBinLoader
 
     internal  void Update()
     {
-        Debug.LogError("=======：" + www.progress);
         if (www != null)
         {
             if (www.isDone)
             {
-                Debug.LogError("加载成功：" + fullUrl);
+             //   Debug.LogError("加载成功：" + fullUrl+"    "+ www.bytes.Length);
                 if (m_callBack!=null)
                 {
                     m_callBack(www.bytes,m_params);
