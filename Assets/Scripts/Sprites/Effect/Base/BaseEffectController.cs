@@ -41,6 +41,19 @@ namespace Engine.Effect
 
         protected List<int> m_testList = new List<int>();
 
+        #region 对内事件--规则内
+        internal Action<string>  eventListener;
+
+        internal void Dispatch(string eventName)
+        {
+            if (eventListener != null)
+            {
+                eventListener(eventName);
+            }
+        }
+
+        #endregion
+
         protected EffectLifeState m_state=EffectLifeState.None;
         public void AddRule(BaseRule p_baseRule)
         {
@@ -214,7 +227,8 @@ namespace Engine.Effect
 
         void DoMove()
         {
-            if (m_state!=EffectLifeState.Dead)
+            //只有在生存规则中才会有
+            if (m_state!=EffectLifeState.None&& m_state != EffectLifeState.Dead && m_state != EffectLifeState.Born)
             {
                 for (int i = 0; i < m_moveRuleList.Count; i++)
                 {
@@ -225,7 +239,7 @@ namespace Engine.Effect
 
         void DoExpand()
         {
-            if (m_state != EffectLifeState.Dead)
+            if (m_state != EffectLifeState.None && m_state != EffectLifeState.Dead && m_state != EffectLifeState.Born)
             {
                 for (int i = 0; i < m_expandRuleList.Count; i++)
                 {

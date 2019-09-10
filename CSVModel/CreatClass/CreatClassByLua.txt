@@ -1,0 +1,6 @@
+cameraparams
+testtable
+avatar
+transpoint_meta
+mapmeta
+luausemsg

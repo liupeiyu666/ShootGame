@@ -20,6 +20,7 @@ namespace BehaviorDesigner.Runtime.Tasks
             } else {
                 Debug.Log(text);
             }
+            Debug.LogError("===Log:"+Time.frameCount);
             return TaskStatus.Success;
         }
 

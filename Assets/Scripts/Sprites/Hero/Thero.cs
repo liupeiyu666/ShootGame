@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BehaviorDesigner.Runtime.Tasks;
 using Engine.Effect;
 using Tgame.Game.Table;
 using UnityEngine;
@@ -56,16 +57,30 @@ public class THero:TSprite
        
     }
 
-    #region 初始化状态机
+    #region 状态机
 
     protected void InitFsm()
     {
         fsm.AddState(new CastSkillState());
+        fsm.eventListener += OnFsmEvent;
     }
+
+    private void OnFsmEvent(System.Object sender, XEventArgs data)
+    {
+        switch (data.name)
+        {
+            case FSMEvent.EVENT_FSM_STATE_COMPLETE:
+                
+                break;
+        }
+    }
+
     #endregion
 
     #region 初始化Data数据
-
+    /// <summary>
+    /// 初始化角色数据
+    /// </summary>
     protected void InitData()
     {
         Table_role t_role = Table_role.GetPrimary(m_data.GetData<CreatData>().role_id);
@@ -197,13 +212,12 @@ public class THero:TSprite
 
     public void Attack(int p_skillId,List<TSprite> p_targetList=null)
     {
-
-        Table_skill t_skill= Table_skill.GetPrimary(p_skillId);
-        //1.直接播放特效即可
-        EffectShareData t_data = new EffectShareData();
-      //  Debug.LogError("====:"+ p_skillId+"   "+ t_skill.bind_pos+"   "+ goRootComp.GetBindPos(t_skill.bind_pos));
-        t_data.m_bornTrans = goRootComp.GetBindPos(t_skill.bind_pos);
-        EffectManager.instance.CreatEffectByController(t_skill.effectid, t_data);
+        SwitchState(StateEnum.CAST_SKILL,new CastSkillState.EnterParams(){m_skillId = p_skillId,m_targetList = p_targetList });
+        //Table_skill t_skill= Table_skill.GetPrimary(p_skillId);
+        ////1.直接播放特效即可
+        //EffectShareData t_data = new EffectShareData();
+        //t_data.m_bornTrans = goRootComp.GetBindPos(t_skill.bind_pos);
+        //EffectManager.instance.CreatEffectByController(t_skill.effectid, t_data);
     }
 
     public void SwitchState(int stateID, System.Object info = null)
@@ -230,6 +244,11 @@ public class THero:TSprite
     {
         return true;
     }
-
+    public override Transform GetBindPos(int p_index)
+    {
+        //1.如果有武器，获取武器的挂点，如果没有就算了
+        
+        return goRootComp.GetBindPos(p_index);
+    }
     #endregion
 }

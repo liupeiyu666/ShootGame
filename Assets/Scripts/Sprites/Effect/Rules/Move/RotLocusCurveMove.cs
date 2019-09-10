@@ -25,8 +25,6 @@ namespace Engine.Effect
         private bool m_haszCurve;
    
         private float m_totalTime;
-
-        private int m_times = 0;
         public override void UpdateMove(float p_deltaTime)
         {
             CheckInit();
@@ -44,13 +42,13 @@ namespace Engine.Effect
             }
             if (m_hasyCurve)
             {
-                m_times++;
                 m_gameObject.transform.Rotate(m_gameObject.transform.up, t_yangel, Space.Self);
                // Debug.LogError(m_gameObject.transform.localRotation.eulerAngles.y+"   "+ t_yangel+"   "+ m_times);
             }
             if (m_haszCurve)
             {
                 m_gameObject.transform.Rotate(m_gameObject.transform.forward, t_zangel, Space.Self);
+               // Debug.LogError(m_gameObject.transform.localRotation.eulerAngles.y + "   " + t_yangel );
             }
             // m_gameObject.transform.eulerAngles=new Vector3(t_xangel,t_yangel,t_zangel);
             m_totalTime += p_deltaTime;
@@ -59,9 +57,10 @@ namespace Engine.Effect
         protected override void OnInit()
         {
             m_totalTime = 0;
-            m_hasxCurve = m_xCurve.length > 1 ? true : false;
-            m_hasyCurve = m_yCurve.length > 1 ? true : false;
-            m_haszCurve = m_zCurve.length > 1 ? true : false;
+            m_hasxCurve = m_xCurve.length >= 1 ? true : false;
+            m_hasyCurve = m_yCurve.length >= 1 ? true : false;
+            m_haszCurve = m_zCurve.length >= 1 ? true : false;
+           // Debug.LogError(m_xCurve.length+"  " + m_yCurve.length+"   "+ m_zCurve.length);
         }
     }
 }

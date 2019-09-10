@@ -17,7 +17,8 @@ public class SpritesProcessor : BaseProcessor
         return new List<Type>()
         {
             typeof(ME_Sprites_Refresh),
-            typeof(ME_Hero_Creat)
+            typeof(ME_Hero_Creat),
+            typeof(ME_SwitchMapOK),
         };
     }
     sealed override protected void ReceivedModuleEvent(ModuleEvent __ME)
@@ -31,6 +32,10 @@ public class SpritesProcessor : BaseProcessor
         {
             ME_Hero_Creat t_temp = __ME as ME_Hero_Creat;
             CreatHero(t_temp.m_data);
+        }
+        else if (__ME.GetType() == typeof(ME_SwitchMapOK))
+        {
+            SpriteRefresh();
         }
     }
     #endregion

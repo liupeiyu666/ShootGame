@@ -1,0 +1,4 @@
+﻿            if(_itemData.TryGetValue("{0}", out _currValue))
+			{{
+			   UGEUtils.GetValueFromString(_currValue, out this._{0});
+			}}

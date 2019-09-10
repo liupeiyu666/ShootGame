@@ -15,6 +15,17 @@ namespace Engine.Effect
     public class EffectController:BaseEffectController
     {
         public Transform m_taget;
+
+        //void Awake()
+        //{
+        //    Debug.LogError(transform.position + "  " + Time.frameCount);
+        //}
+
+        //void Update()
+        //{
+        //    Debug.LogError(transform.position+"  "+Time.frameCount);
+        //}
+
         public override void CombinRules()
         {
             m_shareDate.m_bornPos=new Vector3(10.5f,2.6f,3.7f);

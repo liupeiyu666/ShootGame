@@ -34,10 +34,12 @@ namespace Engine.Effect
         /// 在垂直于目标方向的偏移
         /// </summary>
         public AnimationCurve m_offestUpCurve;
+        public Enum_CurveType m_offestUpCurveType;
         /// <summary>
         /// 在目标方向的右侧偏移
         /// </summary>
         public AnimationCurve m_offestRightCurve;
+        public Enum_CurveType m_offestRightType;
         /// <summary>
         /// 是否朝向移动的方向
         /// </summary>
@@ -65,9 +67,20 @@ namespace Engine.Effect
             m_totalTime += p_deltaTime;
             //获取速度，具体的在设置曲线的时候完成曲线的设置
             float t_speed = m_speedCurve.Evaluate(m_totalTime);
+            //就散方向
             CaculateFollow(t_speed * p_deltaTime);
             SetLookAt();
-            m_gameObject.transform.position += m_dirction * t_speed * p_deltaTime;
+            if (m_dirction==Vector3.zero)
+            {
+                Debug.LogError("Dispatch(RuleEvent_OnArrive)");
+                m_gameObject.transform.position = m_shareDate.m_targetPos;
+                Dispatch(RuleEvent_OnArrive);
+            }
+            else
+            {
+                m_gameObject.transform.position += m_dirction * t_speed * p_deltaTime;
+            }
+           
         }
         protected override void OnInit()
         {
@@ -93,55 +106,73 @@ namespace Engine.Effect
             m_totalTime = 0;
         }
 
+        private float m_recordStep;
         void CaculateFollow(float p_step)
         {
-            if (m_shareDate.m_targetTrans&&m_shareDate.m_targetTrans.gameObject.activeInHierarchy)
+            if (true||m_shareDate.m_targetTrans&&m_shareDate.m_targetTrans.gameObject.activeInHierarchy)
             {
-                //if (m_shareDate.m_targetTrans != null)
-                //{
-                //    m_shareDate.m_targetPos = m_shareDate.m_targetTrans.position;
-                //}
+                //如果是追踪目标的
+
                 //越域就别跑了
-                if (Vector3.Distance(m_gameObject.transform.position, m_shareDate.m_targetPos) < p_step)
+                if (Vector3.Distance(m_gameObject.transform.position, m_shareDate.m_targetPos) < m_recordStep)
                 {
+                 //   Debug.LogError("m_dirction = Vector3.zero");
                     //到了，别跑了
                     m_dirction = Vector3.zero;
                     return;
                 }
-
-
+             //   Debug.LogError("+++:"+ m_gameObject.transform.position.x+"  "+ m_gameObject.transform.position.y+"  "+ m_gameObject.transform.position.z+"   "+ m_dirction + "  "+ Vector3.Distance(m_gameObject.transform.position, m_shareDate.m_targetPos)+"  "+ m_recordStep);
+                m_recordStep = p_step;
                 Vector3 t_currentpos = (m_shareDate.m_targetPos - (m_gameObject.transform.position));
                 Vector3 t_begin=(m_shareDate.m_targetPos -m_orignPos);
                 //获取当前的原始方向上的分量
                 Vector3 t_Originprotject = Vector3.Project(t_currentpos, t_begin);
-                //行进一步的差值投影
-                Vector3 t_stepProject = Vector3.Project(m_dirction * p_step, t_begin);
+                //行进一步的差值投影--2019.2.28之前是在上一次的方向进行一次移动，这样就会导致如果上一次的方向Y方向做了严重偏离就会导致再恢复正常轨迹的时候有问题
+                //本次修改为根据投影去计算
+                Vector3 t_stepProject = t_Originprotject.normalized* p_step;
                 //当前的投影分量
-             //   Vector3 t_currentProject = Vector3.Project(m_dirction * p_step, t_begin);
-
-                float t_rr= (t_stepProject.magnitude / t_Originprotject.magnitude) * (1 - m_curvePercent);
-                m_curvePercent += (t_stepProject.magnitude / t_Originprotject.magnitude) * (1 - m_curvePercent);
-              //  Debug.LogError("m_curvePercent:"+ m_curvePercent+"   "+t_rr +"   "+ t_stepProject.magnitude / t_Originprotject.magnitude+ "   t_stepProject：" + t_stepProject+ "   m_dirction：" + m_dirction+"   "+Time.frameCount);
-              //  float t_percent = m_curvePercent + (t_stepProject.magnitude / t_Originprotject.magnitude)*(1-m_curvePercent);
-                float t_upOffset = 0,t_rightOffset=0;
-                if (m_curvePercent < 1)
+                float t_evalute = 1-(t_Originprotject - t_stepProject).magnitude / t_begin.magnitude;
+                float t_upOffset = 0, t_rightOffset = 0;
+                if (t_evalute < 0.99f)
                 {
-                    t_upOffset = m_offestUpCurve.Evaluate(m_curvePercent) * t_begin.magnitude;
-                    t_rightOffset = m_offestRightCurve.Evaluate(m_curvePercent) *t_begin.magnitude;
+                    float t_distance = (m_shareDate.m_targetPos - t_Originprotject + t_stepProject).magnitude;
 
+                    switch (m_offestRightType)
+                    {
+                        case Enum_CurveType.Distance:
+                            t_rightOffset = m_offestRightCurve.Evaluate(t_distance) ;
+                            break;
+                        case Enum_CurveType.Percent:
+                            t_rightOffset = m_offestRightCurve.Evaluate(t_evalute) * t_begin.magnitude;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    switch (m_offestUpCurveType)
+                    {
+                        case Enum_CurveType.Distance:
+                            t_upOffset = m_offestUpCurve.Evaluate(t_distance);
+                            break;
+                        case Enum_CurveType.Percent:
+                            t_upOffset = m_offestUpCurve.Evaluate(t_evalute) * t_begin.magnitude;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    //计算偏移值,计算下一次的位置方向
+                    Quaternion t_qua = Quaternion.LookRotation(t_begin);
+                    Vector3 t_up = t_qua * Vector3.up;
+                    Vector3 t_right = t_qua * Vector3.right;
+                    Vector3 t_calatePos = m_orignPos + t_Originprotject + t_stepProject + t_up * t_upOffset +
+                                          t_right * t_rightOffset;
+                    m_dirction = (m_shareDate.m_targetPos - t_Originprotject + t_stepProject + t_up * t_upOffset + t_right * t_rightOffset - m_gameObject.transform.position).normalized;
                 }
-                //Debug.LogError("UP:"+ t_upOffset);
-                //计算偏移值,计算下一次的位置方向
-                Quaternion t_qua=Quaternion.LookRotation(t_begin);
-                Vector3 t_up = t_qua * Vector3.up;
-                Vector3 t_right = t_qua * Vector3.right;
+                else
+                {
+                    m_dirction = Vector3.zero;
+                    return;
+                }
 
-                m_dirction = (m_shareDate.m_targetPos - (t_Originprotject-t_stepProject.magnitude* t_Originprotject.normalized) + t_up* t_upOffset+ t_right*t_rightOffset - m_gameObject.transform.position).normalized;
-                Vector3 t_temss = (m_shareDate.m_targetPos - (t_Originprotject - t_stepProject.magnitude * t_Originprotject.normalized) - m_gameObject.transform.position);
-                Vector3 t_temttar = m_shareDate.m_targetPos - (t_Originprotject - t_stepProject.magnitude * t_Originprotject.normalized) + new Vector3(t_rightOffset, t_upOffset, 0);
-              //  Debug.LogError(" 投影距离: " + t_temttar.z+ "      方向："+ t_temss.z+ "  t_Originprotject:"+ t_Originprotject.z+ "   t_stepProject:"+ t_stepProject.z+"    "+Time.frameCount);
-               // Debug.LogError(m_curvePercent + "  t_protject:" + t_dis + "  m_gameObjectY:" + m_gameObject.transform.position.y + "   m_gameObjectZ:" + m_gameObject.transform.position.z + "  " + "   m_dirction.y:"+ m_dirction.y+"   " + t_temss.y+"   "+t_temss.z+ "    t_temttar:" + t_temttar);
-               
             }
         }
 

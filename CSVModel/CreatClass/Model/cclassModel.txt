@@ -1,0 +1,105 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System;
+using ZTool.Table;
+namespace Tgame.Game.Table
+{{
+    ///<summary>
+    /// AutoCreat
+    ///</summary>
+    [Serializable]
+    [TableName("{0}")]
+    public partial class Table_{0} : TableContent
+    {{
+
+        private static List<Table_{0}> all_Table_{0}_List = new List<Table_{0}>();
+        //primary | 主键
+        public static Dictionary<int, Table_{0}> pool_primary = new Dictionary<int, Table_{0}>();
+
+        #region 字段
+{1}
+        #endregion
+
+        #region 数据填充
+        ///<summary>
+        /// 通过字典初始化对象值
+        ///</summary>
+        public override void ParseFrom(Dictionary<string, string> _itemData)
+        {{
+            string _currValue = "";
+{2}
+        }}
+
+        ///<summary>
+        /// 获取table表名
+        ///</summary>
+        public override string Table()
+        {{
+            return "{0}";
+        }}
+        #endregion
+        ///<summary>
+        /// 主键
+        /// 查询数据
+        ///</summary>
+        ///	<param id> 主键：ID</param>
+        ///
+        public static Table_{0} GetPrimary(int _id)
+        {{
+            Table_{0} _map0 = null;
+            pool_primary.TryGetValue(_id, out _map0);
+            return _map0;
+        }}
+        ///<summary>
+        ///主键
+        ///查询所有数据
+        ///</summary>
+        public static Dictionary<int, Table_{0}> GetAllPrimary()
+        {{
+            return pool_primary;
+        }}
+
+
+        ///查询出所有的数据
+        public static List<Table_{0}> GetAllPrimaryList()
+        {{
+            return all_Table_{0}_List;
+        }}
+
+
+
+        ///<summary>
+        ///根据column获取值
+        ///</summary>
+        public override object GetValue(string column)
+        {{
+            switch (column)
+            {{
+                case "id":
+                    return this._id;
+                default:
+                    return null;
+            }}
+        }}
+
+        ///<summary>
+        /// 初始化Pool
+        ///</summary>
+        public static void InitPool(IList _rows)
+        {{
+            List<Table_{0}> rows = _rows as List<Table_{0}>;
+            pool_primary = TableContent.ListToPool<int, Table_{0}>(rows, "map", "id");
+            all_Table_{0}_List = rows;
+        }}
+
+        ///<summary>
+        /// 清理静态数据
+        ///</summary>
+        public static void Clear()
+        {{
+            pool_primary.Clear();
+            all_Table_{0}_List.Clear();
+        }}
+
+    }}
+}}

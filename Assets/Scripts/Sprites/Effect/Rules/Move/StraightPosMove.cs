@@ -94,4 +94,16 @@ namespace Engine.Effect
         /// </summary>
         TargetTrans,
     }
+
+    public enum Enum_CurveType
+    {
+        /// <summary>
+        /// 曲线类型，主要是数值的获取，Origin表示按照x为距离进行获取
+        /// </summary>
+        Distance,
+        /// <summary>
+        /// 曲线类型，主要是数值的获取，Percent表示按照x为百分比进行获取，所以最多就是为1
+        /// </summary>
+        Percent,
+    }
 }

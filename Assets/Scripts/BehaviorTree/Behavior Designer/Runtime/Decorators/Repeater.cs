@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace BehaviorDesigner.Runtime.Tasks
 {
     [TaskDescription(@"The repeater task will repeat execution of its child task until the child task has been run a specified number of times. " +
@@ -20,12 +22,14 @@ namespace BehaviorDesigner.Runtime.Tasks
 
         public override bool CanExecute()
         {
+         //   Debug.LogError("CanExecute");
             // Continue executing until we've reached the count or the child task returned failure and we should stop on a failure.
             return (repeatForever.Value || executionCount < count.Value) && (!endOnFailure.Value || (endOnFailure.Value && executionStatus != TaskStatus.Failure));
         }
 
         public override void OnChildExecuted(TaskStatus childStatus)
         {
+         //   Debug.LogError("OnChildExecuted:"+ executionCount);
             // The child task has finished execution. Increase the execution count and update the execution status.
             executionCount++;
             executionStatus = childStatus;

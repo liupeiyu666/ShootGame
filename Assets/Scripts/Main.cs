@@ -33,6 +33,7 @@ public class Main:MonoBehaviour
 
     void Update()
     {
+        
         TTicker.tUpdate();
         GOPoolV3.instance.tUpdate();
         if (Input.GetKeyDown(KeyCode.P))

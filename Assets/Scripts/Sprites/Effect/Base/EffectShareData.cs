@@ -10,6 +10,7 @@ namespace Engine.Effect
     /// 特效的共享数据
     /// 运行时执行的数据
     /// </summary>
+    [Serializable]
     public class EffectShareData
     {
         /// <summary>
@@ -27,7 +28,7 @@ namespace Engine.Effect
         /// <summary>
         /// 出生的角度
         /// </summary>
-        public Quaternion m_bornRot;
+        public Vector3 m_bornRot;
 
         /// <summary>
         /// 要到达的点
@@ -36,6 +37,6 @@ namespace Engine.Effect
         /// <summary>
         /// 要到达的角度
         /// </summary>
-        public Quaternion m_targetRot;
+        public Vector3 m_targetRot;
     }
 }

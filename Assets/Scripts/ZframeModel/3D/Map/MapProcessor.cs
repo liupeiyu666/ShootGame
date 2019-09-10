@@ -57,7 +57,7 @@ public class MapProcessor : BaseProcessor
 
     void StartSwitchMap(int p_mapID)
     {
-       
+       MapManager.instance.LoadScene(p_mapID);
     }
     void OnMapEvent(System.Object sender, XEventArgs ea)
     {

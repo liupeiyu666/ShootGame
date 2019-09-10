@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using ZframeModel.ZEvent.Sprites;
+using ZFrame;
 
 public class MapManager  {
     #region 单例
@@ -22,6 +25,39 @@ public class MapManager  {
 
             return _instance;
         }
+    }
+
+    #endregion
+
+    #region 场景切换
+
+    private string m_midSceneID = "midScene";
+    private AsyncOperation m_asyncOperation;
+    public int m_nextSceneId;
+    /// <summary>
+    /// 切换场景
+    /// </summary>
+    /// <param name="p_sceneID"></param>
+    /// <param name="p_haveMid">是否有中间过渡的场景</param>
+    public void LoadScene(int p_sceneID,bool p_haveMid=true)
+    {
+        m_nextSceneId = p_sceneID;
+        if (p_haveMid)
+        {
+            SceneManager.LoadScene(m_midSceneID, LoadSceneMode.Additive);  //U533以上
+           
+        }
+        else
+        {
+            SceneManager.LoadScene(p_sceneID, LoadSceneMode.Additive);  //U533以上
+            Frame.DispatchEvent(MEFactory.New<ME_SwitchMapOK>());
+        }
+       
+    }
+
+    public void UnloadScene(int p_sceneID)
+    {
+        SceneManager.UnloadSceneAsync(p_sceneID);
     }
 
     #endregion
@@ -67,7 +103,6 @@ public class MapManager  {
         LayerMask nl = 1 << EngineLayerEnum.Block;
         if (Physics.Raycast(ray, out hit, 1f, nl))
         {
-            Debug.LogError(hit.transform.name + "  " + Time.frameCount);
             return hit.normal;
         }
         return Vector3.zero;

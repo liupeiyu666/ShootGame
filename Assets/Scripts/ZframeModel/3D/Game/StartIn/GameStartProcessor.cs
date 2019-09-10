@@ -29,7 +29,7 @@ public class GameStartProcessor : BaseProcessor
                 //开始游戏---进入选择角色等等，根据游戏内容进行设置
                 //--这里先做加载英雄，加载地图
                 Frame.DispatchEvent(MEFactory.New<ME_Hero_Creat>(1));
-                Frame.DispatchEvent(MEFactory.New<ME_SwitchMap>());
+                Frame.DispatchEvent(MEFactory.New<ME_SwitchMap>(0));
             }
                 break;
         }

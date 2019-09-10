@@ -135,7 +135,7 @@ public class SafeTimer {
     }
 
 	/// <summary>
-	/// 剩余时间百分比
+	/// 已经进行的时间百分比
 	/// </summary>
 	/// <returns>The time percentage.</returns>
 	public float Percentage()
@@ -143,7 +143,7 @@ public class SafeTimer {
         // float passedTime = UGEUtilsV2.realtimeSinceStartup - startTimeSec;
         float passedTime = GetDuringTime();
        // float passedTime = Time.realtimeSinceStartup - startTimeSec;
-		return UGEUtils.SafeDivide(passedTime,durSec);
+		return Mathf.Clamp(UGEUtils.SafeDivide(passedTime, durSec),0,1);
 	}
 
 	/// <summary>

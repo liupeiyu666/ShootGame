@@ -13,7 +13,7 @@ namespace Engine.Effect
     /// </summary>
     public class EffectLoader:IEffectLoader
     {
-        Dictionary<int,string> m_resDic=new Dictionary<int, string>()
+        public Dictionary<int,string> m_resDic=new Dictionary<int, string>()
         {
             { 0,"Bullets/jian"},
             {1,"Bullets/luoxuan"},
@@ -52,7 +52,7 @@ namespace Engine.Effect
             else
             {
                 m_go.SetActive(true);
-                Debug.LogError("Get------:"+ m_go.name+"   "+Time.frameCount);
+             //   Debug.LogError("Get------:"+ m_go.name+"   "+Time.frameCount);
             }
             //
             if (!m_ContainerTransform)
@@ -67,7 +67,7 @@ namespace Engine.Effect
         /// </summary>
         public void Unload()
         {
-            Debug.LogError("回收=====:" + m_url+"  "+ m_go .name+ "   "+Time.frameCount);
+           // Debug.LogError("回收=====:" + m_url+"  "+ m_go .name+ "   "+Time.frameCount);
             BaseEffectController t_controller = m_go.GetComponent<BaseEffectController>();
             if (t_controller!=null)
             {

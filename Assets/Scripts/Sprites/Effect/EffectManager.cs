@@ -35,6 +35,10 @@ namespace Engine.Effect
 
         #endregion
         /// <summary>
+        /// 如果是测试，获取资源路径的地址不同
+        /// </summary>
+        public bool m_isTest;
+        /// <summary>
         /// 存储所有特效的加载器和控制器
         /// </summary>
         Dictionary<IEffectLoader,BaseEffectController> m_allEffectDic=new Dictionary<IEffectLoader, BaseEffectController>();
@@ -56,7 +60,15 @@ namespace Engine.Effect
         /// <returns></returns>
         public IEffectLoader CreatEffectByController(int p_id,EffectShareData p_shareData)
         {
-            IEffectLoader t_loader =new EffectLoader();
+            IEffectLoader t_loader ;
+            if (m_isTest)
+            {
+                t_loader=new TestEffectLoader();
+            }
+            else
+            {
+                t_loader = new EffectLoader();
+            }
             m_allEffectDic.Add(t_loader, null);
             t_loader.Load(p_id, OnLoadOK,new LoadStruct(p_shareData, t_loader));
             return null;

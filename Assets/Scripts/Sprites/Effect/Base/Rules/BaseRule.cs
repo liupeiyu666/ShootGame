@@ -25,6 +25,25 @@ namespace Engine.Effect
             get { return m_effectController.m_shareDate; }
         }
 
+        #region 事件
+
+        protected const string RuleEvent_OnArrive = "RuleEvent_OnArrive";
+        protected void AddEventListener(Action<string> p_action)
+        {
+            m_effectController.eventListener += p_action;
+        }
+        protected void RemoveEventListener(Action<string> p_action)
+        {
+            m_effectController.eventListener -= p_action;
+        }
+
+        protected void Dispatch(string p_eventName)
+        {
+            m_effectController.Dispatch(p_eventName);
+        }
+
+
+        #endregion
         /// <summary>
         /// 初始化控制器
         /// </summary>

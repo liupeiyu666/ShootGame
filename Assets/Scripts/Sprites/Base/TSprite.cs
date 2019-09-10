@@ -148,4 +148,18 @@ public class TSprite
         GameObject.Destroy(gameObject);
     }
     #endregion
+
+    #region 对外开放
+    /// <summary>
+    /// 根据传入的节点信息，获取对应的transform，目前用于子弹发射，由于特效的挂点可能多种
+    /// 比如，主角的子弹发射挂点在有武器（可以切换）的时候是武器的挂点，没有的时候可能使用自身的挂点，比如怪物
+    /// </summary>
+    /// <returns></returns>
+    public virtual Transform GetBindPos(int p_index)
+    {
+        return null;
+    }
+
+
+    #endregion
 }

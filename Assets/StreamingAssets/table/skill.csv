@@ -1,5 +1,5 @@
-id,effectid,ani_name,bind_pos,bind_des
+ï»¿id,effectid,ani_name,bind_pos,bind_des
 int,int,string,int,string
-,,,°ó¶¨µÄÎ»ÖÃ,°ó¶¨µÄÃèÊö£¬ÓÃÓÚÆ«ÒÆÉèÖÃ
+,,,ç»‘å®šçš„ä½ç½®,ç»‘å®šçš„æè¿°ï¼Œç”¨äºåç§»è®¾ç½®
 1,0,0,0,
 2,1,,1,2_0_0

@@ -200,9 +200,11 @@ public class EffectContollerEditor : Editor
             {
                 foreach (var t_ruleList in m_addedRulesDic.Values)
                 {
+                    
                     for (int i = 0; i < t_ruleList.Count; i++)
                     {
-                        DestroyImmediate(t_ruleList[i]);
+                        RemoveOneType(t_ruleList[i].GetType());
+                       // DestroyImmediate(t_ruleList[i]);
                     }
                     t_ruleList.Clear();
                 }
@@ -268,6 +270,8 @@ public class EffectContollerEditor : Editor
                         if (t_isContain)
                         {
                             RemoveOneType(m_allRulesDic[p_type][i]);
+                            EditorUtility.SetDirty(m_target.gameObject);
+
                         }
                         else
                         {
@@ -317,8 +321,17 @@ public class EffectContollerEditor : Editor
                 if (p_type.IsInstanceOfType(t_ruleList[i]))
                 {
                    // Object.Destroy();
-                    DestroyImmediate(t_ruleList[i],true);
-                    t_ruleList.RemoveAt(i);
+                  //  Destroy(t_ruleList[i]);
+                    try
+                    {
+                        DestroyImmediate(t_ruleList[i], true);
+                        t_ruleList.RemoveAt(i);
+                    }
+                    catch (Exception e)
+                    {
+                      
+                    }
+                  
                 }
             }
         }
